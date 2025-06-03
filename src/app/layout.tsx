@@ -6,6 +6,7 @@ import Providers from "@/components/molecules/providers";
 import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
 import { fontVariables } from "@/lib/font";
+import NextTopLoader from 'nextjs-toploader';
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -49,6 +50,7 @@ export default async function RootLayout({
           fontVariables
         )}
       >
+        <NextTopLoader showSpinner={false} />
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
