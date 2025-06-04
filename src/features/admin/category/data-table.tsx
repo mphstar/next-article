@@ -28,6 +28,7 @@ import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useAlertModal } from "@/store/alert-context";
 import { deleteSelectedCategory } from "./actions";
+import { toast } from "sonner";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -70,16 +71,19 @@ export function DataTable<TData, TValue>({
     showModal({
       onConfirm: async () => {
         setLoading(true);
-        try {
-          // Call your delete action here
-          await deleteSelectedCategory(general);
+
+        const res = await deleteSelectedCategory(general);
+
+        if (res.success) {
           table.setRowSelection({});
-        } catch (error) {
-          console.error("Failed to delete categories:", error);
-        } finally {
-          setLoading(false);
+          toast.success(res.message);
+          closeModal();
+        } else {
+          toast.error(res.message);
           closeModal();
         }
+
+        setLoading(false);
       },
     });
   };

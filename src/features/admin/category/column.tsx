@@ -17,6 +17,7 @@ import { deleteCategory } from "./actions";
 import { useState, useTransition } from "react";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { useAlertModal } from "@/store/alert-context";
+import { toast } from "sonner";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -113,14 +114,18 @@ export const columns: ColumnDef<CategoryType>[] = [
                   showModal({
                     onConfirm: async () => {
                       setLoading(true);
-                      try {
-                        await deleteCategory(payment.id);
+
+                      const res = await deleteCategory(payment.id);
+
+                      if (res.success) {
+                        toast.success(res.message);
                         closeModal();
-                      } catch (error) {
-                        console.error("Failed to delete category:", error);
-                      } finally {
-                        setLoading(false);
+                      } else {
+                        toast.error(res.message);
+                        closeModal();
                       }
+
+                      setLoading(false);
                     },
                   });
                 }}

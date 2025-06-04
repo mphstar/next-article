@@ -25,6 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   name: z.string().min(1).max(50),
@@ -57,10 +58,12 @@ const FormDialog = () => {
 
         if (res.success) {
           context.setOpen(false);
+          toast.success(res.message);
 
           form.reset();
         } else {
           console.log(res);
+          toast.error(res.message);
         }
       });
     } else {
