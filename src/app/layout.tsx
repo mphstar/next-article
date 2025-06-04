@@ -9,6 +9,7 @@ import { fontVariables } from "@/lib/font";
 import NextTopLoader from "nextjs-toploader";
 import { AlertModalProvider } from "@/store/alert-context";
 import GlobalAlertModal from "@/components/layout/global-alert";
+import { Toaster } from "@/components/ui/sonner";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -61,6 +62,7 @@ export default async function RootLayout({
           enableColorScheme
         >
           <Providers activeThemeValue={activeThemeValue as string}>
+            <Toaster />
             <AlertModalProvider>
               {children}
               <GlobalAlertModal />
