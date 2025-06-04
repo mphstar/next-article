@@ -13,46 +13,50 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import useCategoryStore from "@/store/useCategory";
-import { use, useEffect, useState, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import { saveCategory, updateCategory } from "./actions";
-import InputError from "@/components/ui/input-error";
-import { useFormState } from "@/hooks/use-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
+const formSchema = z.object({
+  name: z.string().min(1).max(50),
+});
 
 const FormDialog = () => {
   const context = useCategoryStore();
   const [isPending, startTransition] = useTransition();
-  const [errors, setErrors] = useState<{ name?: string[]; _form?: string[] }>(
-    {}
-  );
 
-  const form = useFormState({
-    name: "",
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    values: {
+      name: "",
+    },
   });
 
   useEffect(() => {
     if (context.currentRow) {
-      form.setValues({
-        name: context.currentRow.name || "",
-      });
+      form.setValue("name", context.currentRow.name);
     }
   }, [context.currentRow]);
 
   const onSaveData = () => {
     const formData = new FormData();
-    formData.set("name", form.values.name);
+    formData.set("name", form.getValues("name"));
 
     if (context.dialog === "create") {
       startTransition(async () => {
         const res = await saveCategory(formData);
 
-        if (res?.errors) {
-          setErrors(res.errors);
-          return;
-        }
-
         if (res.success) {
           context.setOpen(false);
-          setErrors({});
           form.reset();
         } else {
           console.log(res);
@@ -62,14 +66,8 @@ const FormDialog = () => {
       startTransition(async () => {
         const res = await updateCategory(formData, context.currentRow?.id);
 
-        if (res?.errors) {
-          setErrors(res.errors);
-          return;
-        }
-
         if (res.success) {
           context.setOpen(false);
-          setErrors({});
           form.reset();
         } else {
           console.log(res);
@@ -98,27 +96,34 @@ const FormDialog = () => {
           </DialogDescription>
         </DialogHeader>
         <ScrollArea className="-mr-4 h-[26.25rem] w-full py-1 pr-4">
-          <form id="user-form" action={onSaveData} className="space-y-4 p-0.5">
-            <div className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
-              <Label className="col-span-2 text-right">Nama Category</Label>
-              <Input
-                placeholder="Masukkan nama category"
+          <Form {...form}>
+            <form
+              id="user-form"
+              onSubmit={form.handleSubmit(onSaveData)}
+              className="space-y-4 p-0.5"
+            >
+              <FormField
+                control={form.control}
                 name="name"
-                className="col-span-4"
-                autoComplete="off"
-                value={form.values.name}
-                onChange={(e) => {
-                  form.handleChange(e);
-                }}
+                render={({ field }) => (
+                  <div className="grid grid-cols-6 items-center space-y-0 gap-x-4 gap-y-1">
+                    <FormLabel className="col-span-2 text-right">
+                      Nama Category
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Masukkan nama category"
+                        className="col-span-4"
+                        autoComplete="off"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage className="col-span-4 col-start-3 mt-2" />
+                  </div>
+                )}
               />
-              {errors.name && (
-                <InputError
-                  className="col-span-4 col-start-3 mt-2"
-                  message={errors.name.join(", ")}
-                />
-              )}
-            </div>
-          </form>
+            </form>
+          </Form>
         </ScrollArea>
         <DialogFooter>
           <Button
