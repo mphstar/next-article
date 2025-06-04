@@ -16,6 +16,7 @@ import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import { deleteCategory } from "./actions";
 import { useState, useTransition } from "react";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
+import { useAlertModal } from "@/store/alert-context";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
@@ -84,28 +85,11 @@ export const columns: ColumnDef<CategoryType>[] = [
     cell: ({ row }) => {
       const payment = row.original;
       const context = useCategoryStore();
-      const [isPending, startTransition] = useTransition();
 
-      const [open, setOpen] = useState(false);
+      const { showModal, setLoading, closeModal } = useAlertModal();
 
       return (
         <>
-          <AlertModal
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            onConfirm={() => {
-              startTransition(async () => {
-                const res = await deleteCategory(payment.id);
-
-                if (res.success) {
-                  setOpen(false);
-                } else {
-                  console.log(res);
-                }
-              });
-            }}
-            loading={isPending}
-          />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
@@ -126,7 +110,19 @@ export const columns: ColumnDef<CategoryType>[] = [
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => {
-                  setOpen(true);
+                  showModal({
+                    onConfirm: async () => {
+                      setLoading(true);
+                      try {
+                        await deleteCategory(payment.id);
+                        closeModal();
+                      } catch (error) {
+                        console.error("Failed to delete category:", error);
+                      } finally {
+                        setLoading(false);
+                      }
+                    },
+                  });
                 }}
               >
                 <IconTrash className="mr-1 h-4 w-4" /> Delete Data

@@ -11,7 +11,7 @@ const ButtonAddProduct = () => {
   return (
     <Button
       onClick={() => {
-        store.setCurrentRow({});
+        store.setCurrentRow(undefined);
         store.setDialog("create");
         store.setOpen(true);
       }}

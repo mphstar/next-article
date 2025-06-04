@@ -6,7 +6,9 @@ import Providers from "@/components/molecules/providers";
 import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
 import { fontVariables } from "@/lib/font";
-import NextTopLoader from 'nextjs-toploader';
+import NextTopLoader from "nextjs-toploader";
+import { AlertModalProvider } from "@/store/alert-context";
+import GlobalAlertModal from "@/components/layout/global-alert";
 
 const META_THEME_COLORS = {
   light: "#ffffff",
@@ -59,7 +61,10 @@ export default async function RootLayout({
           enableColorScheme
         >
           <Providers activeThemeValue={activeThemeValue as string}>
-            {children}
+            <AlertModalProvider>
+              {children}
+              <GlobalAlertModal />
+            </AlertModalProvider>
           </Providers>
         </ThemeProvider>
       </body>

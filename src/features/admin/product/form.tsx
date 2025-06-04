@@ -37,7 +37,7 @@ const FormDialog = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     values: {
-      name: "",
+      name: context.currentRow?.name || "",
     },
   });
 
@@ -57,6 +57,7 @@ const FormDialog = () => {
 
         if (res.success) {
           context.setOpen(false);
+
           form.reset();
         } else {
           console.log(res);
