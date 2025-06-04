@@ -1,4 +1,6 @@
 import { Icons } from "@/components/icons";
+import { IconProps } from "@tabler/icons-react";
+import React from "react";
 
 export interface NavItem {
   title: string;
@@ -6,7 +8,7 @@ export interface NavItem {
   disabled?: boolean;
   external?: boolean;
   shortcut?: [string, string];
-  icon?: keyof typeof Icons;
+  icon?: React.ComponentType<IconProps>;
   label?: string;
   description?: string;
   isActive?: boolean;

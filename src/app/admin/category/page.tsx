@@ -1,10 +1,10 @@
 import PageContainer from "@/components/layout/page-container";
 import { Heading } from "@/components/ui/heading";
 import { Separator } from "@/components/ui/separator";
-import ButtonAddProduct from "@/features/admin/product/button-add";
-import { columns } from "@/features/admin/product/column";
-import { DataTable } from "@/features/admin/product/data-table";
-import FormDialog from "@/features/admin/product/form";
+import ButtonAddProduct from "@/features/admin/category/button-add";
+import { columns } from "@/features/admin/category/column";
+import { DataTable } from "@/features/admin/category/data-table";
+import FormDialog from "@/features/admin/category/form";
 import { PrismaClient } from "@/generated/prisma";
 import React, { Suspense } from "react";
 

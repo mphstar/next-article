@@ -20,10 +20,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 
-import {
-  IconChevronRight,
-  IconPhotoUp,
-} from "@tabler/icons-react";
+import { IconChevronRight, IconPhotoUp } from "@tabler/icons-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import * as React from "react";
@@ -71,7 +68,7 @@ export default function AppSidebar() {
           <SidebarGroupLabel>Overview</SidebarGroupLabel>
           <SidebarMenu>
             {navItems.map((item) => {
-              const Icon = item.icon ? Icons[item.icon] : Icons.logo;
+              const Icon = item.icon ? item.icon : Icons.logo;
               return item?.items && item?.items?.length > 0 ? (
                 <Collapsible
                   key={item.title}
