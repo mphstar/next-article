@@ -2,97 +2,129 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { titleToSlug } from "@/lib/utils";
 
-export const addTag = async (formData: FormData) => {
-  const values = {
-    name: formData.get("name")?.toString() ?? "",
+export const addArticle = async (ar: {
+  title: string;
+  content: string;
+  category: {
+    id: number;
   };
-
-  const { name } = values;
-
+  tags: number[];
+}) => {
   try {
-    await prisma.tag.create({
+    await prisma.article.create({
       data: {
-        name,
+        title: ar.title,
+        slug: titleToSlug(ar.title),
+        content: ar.content,
+        categoryId: ar.category.id,
+        articleTags: {
+          createMany: {
+            data: [
+              ...ar.tags.map((item) => ({
+                tagId: item,
+              })),
+            ],
+          },
+        },
       },
     });
 
-    revalidatePath("/admin/tag");
+    revalidatePath("/admin/articles");
 
     return {
       success: true,
-      message: "Tag saved successfully.",
+      message: "Article saved successfully.",
     };
   } catch (error) {
-    console.error("Error saving tag:", error);
+    console.error("Error saving article:", error);
 
     return {
       success: false,
-      message: "Failed to save tag.",
+      message: "Failed to save article.",
     };
   }
 };
 
-export const updateTag = async (formData: FormData, id: number) => {
-  const values = {
-    name: formData.get("name")?.toString() ?? "",
+export const updateArticle = async (ar: {
+  id: number;
+  title: string;
+  content: string;
+  category: {
+    id: number;
   };
-
-  const { name } = values;
-
+  tags: number[];
+}) => {
   try {
-    await prisma.tag.update({
+    // Remove existing tags
+    await prisma.articleTag.deleteMany({
+      where: { articleId: ar.id },
+    });
+
+    // Update article and add new tags
+    await prisma.article.update({
+      where: { id: ar.id },
       data: {
-        name,
-      },
-      where: {
-        id: id,
+        title: ar.title,
+        slug: titleToSlug(ar.title),
+        content: ar.content,
+        categoryId: ar.category.id,
+        articleTags: {
+          createMany: {
+            data: [
+              ...ar.tags.map((item) => ({
+                tagId: item,
+              })),
+            ],
+          },
+        },
       },
     });
 
-    revalidatePath("/admin/tag");
+    revalidatePath("/admin/articles");
 
     return {
       success: true,
-      message: "Tag updated successfully.",
+      message: "Article updated successfully.",
     };
   } catch (error) {
-    console.error("Error updating tag:", error);
+    console.error("Error updating article:", error);
 
     return {
       success: false,
-      message: "Failed to update tag.",
+      message: "Failed to update article.",
     };
   }
 };
 
-export const deleteTag = async (id: number) => {
+export const deleteArticle = async (id: number) => {
   try {
-    await prisma.tag.delete({
+    await prisma.article.delete({
       where: {
         id,
       },
     });
 
-    revalidatePath("/admin/tag");
+    revalidatePath("/admin/articles");
 
     return {
       success: true,
-      message: "Tag deleted successfully.",
+      message: "Article deleted successfully.",
     };
   } catch (error) {
-    console.error("Error deleting tag:", error);
+    console.error("Error deleting article:", error);
 
     return {
       success: false,
-      message: "Failed to delete tag.",
+      message: "Failed to delete article.",
     };
   }
 };
 
-export const deleteSelectedTag = async (id: number[]) => {
+export const deleteSelectedArticle = async (id: number[]) => {
   try {
-    await prisma.tag.deleteMany({
+    await prisma.article.deleteMany({
       where: {
         id: {
           in: id,
@@ -100,18 +132,18 @@ export const deleteSelectedTag = async (id: number[]) => {
       },
     });
 
-    revalidatePath("/admin/tag");
+    revalidatePath("/admin/articles");
 
     return {
       success: true,
-      message: "Tag deleted successfully.",
+      message: "Article deleted successfully.",
     };
   } catch (error) {
-    console.error("Error deleting tag:", error);
+    console.error("Error deleting article:", error);
 
     return {
       success: false,
-      message: "Failed to delete tag.",
+      message: "Failed to delete article.",
     };
   }
 };

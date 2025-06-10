@@ -27,8 +27,8 @@ import {
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useAlertModal } from "@/store/alert-context";
-import { deleteSelectedTag } from "./actions";
 import { toast } from "sonner";
+import { deleteSelectedArticle } from "./actions";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -72,7 +72,7 @@ export function DataTable<TData, TValue>({
       onConfirm: async () => {
         setLoading(true);
 
-        const res = await deleteSelectedTag(general);
+        const res = await deleteSelectedArticle(general);
 
         if (res.success) {
           table.setRowSelection({});

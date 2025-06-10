@@ -13,21 +13,30 @@ import {
 import useCategoryStore from "@/store/useCategory";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
-import { deleteTag } from "./actions";
 import { IconEdit, IconTrash } from "@tabler/icons-react";
 import { useAlertModal } from "@/store/alert-context";
 import useTagStore from "@/store/useTag";
 import { toast } from "sonner";
+import { CategoryType } from "../category/column";
+import { TagType } from "../tag/column";
+import { deleteArticle } from "./actions";
+import Link from "next/link";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type TagType = {
+export type ArticleType = {
   id: number;
-  name: string;
+  title: string;
+  slug: string;
+  content: string;
+  category: CategoryType;
+  articleTags: {
+    tag: TagType;
+  }[];
   createdAt: string | Date;
 };
 
-export const columns: ColumnDef<TagType>[] = [
+export const columns: ColumnDef<ArticleType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -56,7 +65,7 @@ export const columns: ColumnDef<TagType>[] = [
     cell: ({ row }) => row.index + 1,
   },
   {
-    accessorKey: "name",
+    accessorKey: "title",
     header: ({ column }) => {
       return (
         <Button
@@ -64,13 +73,55 @@ export const columns: ColumnDef<TagType>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          Judul
           <ArrowUpDown className="ml-1 h-4 w-4" />
         </Button>
       );
     },
     cell: ({ cell }) => {
       return <span className="px-2">{cell.getValue<string>()}</span>;
+    },
+  },
+  {
+    accessorKey: "slug",
+    header: "Slug",
+  },
+  {
+    accessorKey: "category",
+    header: ({ column }) => {
+      return (
+        <Button
+          className="gap-0"
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Kategori
+          <ArrowUpDown className="ml-1 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ cell }) => {
+      const category = cell.getValue<CategoryType>();
+      return <span className="px-2">{category?.name}</span>;
+    },
+  },
+  {
+    accessorKey: "articleTags",
+    header: "Tags",
+    cell: ({ cell }) => {
+      const tags = cell.getValue<{ tag: TagType }[]>();
+      return (
+        <div className="flex flex-wrap gap-1">
+          {tags.map((item) => (
+            <span
+              key={item.tag.id}
+              className="inline-flex items-center rounded-md bg-gray-200 px-2 py-1 text-xs font-medium text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+            >
+              {item.tag.name}
+            </span>
+          ))}
+        </div>
+      );
     },
   },
   {
@@ -100,21 +151,17 @@ export const columns: ColumnDef<TagType>[] = [
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => {
-                  context.setDialog("update");
-                  context.setCurrentRow(payment);
-                  context.setOpen(true);
-                }}
-              >
-                <IconEdit className="mr-1 h-4 w-4" /> Edit Data
-              </DropdownMenuItem>
+              <Link href={`/admin/articles/${payment.slug}`}>
+                <DropdownMenuItem>
+                  <IconEdit className="mr-1 h-4 w-4" /> Edit Data
+                </DropdownMenuItem>
+              </Link>
               <DropdownMenuItem
                 onClick={() => {
                   showModal({
                     onConfirm: async () => {
                       setLoading(true);
-                      const res = await deleteTag(payment.id);
+                      const res = await deleteArticle(payment.id);
 
                       if (res.success) {
                         toast.success(res.message);
