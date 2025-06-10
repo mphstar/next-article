@@ -6,6 +6,7 @@ import {
   IconLogin,
   IconTag,
   IconUser,
+  IconArticle
 } from "@tabler/icons-react";
 import { User2 } from "lucide-react";
 
@@ -46,6 +47,15 @@ export const navItems: NavItem[] = [
     isActive: false,
     items: [], // No child items
   },
+  {
+    title: "Articles",
+    url: "/admin/articles",
+    icon: IconArticle,
+    shortcut: ["p", "p"],
+    isActive: false,
+    items: [], // No child items
+  },
+  
   {
     title: "Account",
     url: "#", // Placeholder as there is no direct link for the parent

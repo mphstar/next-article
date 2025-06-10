@@ -1,0 +1,20 @@
+/* styles/md-editor-custom.css */
+[data-color-mode='dark'] .w-md-editor {
+  background-color: #0d0d0d !important;
+  color: #ffffff !important;
+}
+
+/* [data-color-mode='dark'] .w-md-editor-text-input {
+  background-color: #1a1a1a !important;
+  color: #f5f5f5 !important;
+} */
+
+[data-color-mode='dark'] .w-md-editor-toolbar {
+  background-color: #121212 !important;
+  border-bottom: 1px solid #2a2a2a !important;
+}
+
+[data-color-mode='dark'] .wmde-markdown {
+  background-color: #0d0d0d !important;
+  color: #dcdcdc !important;
+}

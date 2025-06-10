@@ -63,7 +63,7 @@ export function ThemeSelector() {
           id='theme-selector'
           className='justify-start *:data-[slot=select-value]:w-12'
         >
-          <span className='text-muted-foreground hidden sm:block'>
+          <span className='text-muted-foreground hidden xl:block'>
             Select a theme:
           </span>
           <span className='text-muted-foreground block sm:hidden'>Theme</span>
