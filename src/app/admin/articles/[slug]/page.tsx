@@ -4,13 +4,13 @@ import UpdateArticle from "@/features/admin/article/update";
 import { prisma } from "@/lib/prisma";
 import React from "react";
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
-}
+type Params = Promise<{
+  slug: string;
+}>;
 
-export default async function page({ params }: PageProps) {
+export default async function page(props: { params: Params }) {
+  const params = await props.params;
+
   const data = await prisma.article.findUnique({
     where: {
       slug: params.slug,
